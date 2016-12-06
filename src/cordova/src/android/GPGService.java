@@ -32,6 +32,8 @@ import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.games.achievement.Achievements;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.games.leaderboard.Leaderboards;
+import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
+import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.multiplayer.Invitation;
 import com.google.android.gms.games.multiplayer.Multiplayer;
 import com.google.android.gms.games.snapshot.Snapshot;
@@ -1199,6 +1201,92 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }
         catch (Exception ex) {
             callback.onComplete(0, new Error(ex.getLocalizedMessage(), 0));
+        }
+    }
+
+    public void loadPlayerCenteredScores(final String leaderboardID, final RequestCallback callback) {
+        try {
+            if (!isLoggedIn()) {
+                callback.onComplete(null, new Error("User is not logged into Google Play Game Services", 0));
+                return;
+            }
+            Games.Leaderboards.loadPlayerCenteredScores(client, leaderboardID, LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC, 25, true).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+                @Override
+                public void onResult(Leaderboards.LoadScoresResult result) {
+                    Status status = result.getStatus();
+                    if (status.isSuccess()) {
+                        LeaderboardScoreBuffer leaderboardScores = result.getScores();
+                        JSONObject data = new JSONObject();
+                        if (leaderboardScores != null) {
+                            try {
+                                Iterator<LeaderboardScore> it = leaderboardScores.iterator();
+
+                                while (it.hasNext()) {
+                                    LeaderboardScore temp = it.next();
+                                    data.put(temp.getScoreHolderDisplayName(), temp.getRawScore());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            callback.onComplete(data, new Error("Leaderboards fetched successfully",  GamesStatusCodes.STATUS_OK));
+                        } else {
+                            callback.onComplete(null, new Error("Error fetching scores",  GamesStatusCodes.STATUS_INTERNAL_ERROR));
+                        }
+                    } else {
+                        callback.onComplete(null, new Error("status.isSuccess did not return 'true'",  GamesStatusCodes.STATUS_NETWORK_ERROR_NO_DATA));
+                    }
+                }
+            });
+        }
+        catch (Exception ex) {
+            callback.onComplete(null, new Error(ex.getLocalizedMessage(), 0));
+        }
+    }
+
+    public void loadTopScores(final String leaderboardID, final boolean friends, final RequestCallback callback) {
+        try {
+            if (!isLoggedIn()) {
+                callback.onComplete(null, new Error("User is not logged into Google Play Game Services", 0));
+                return;
+            }
+            int scope = -1;
+            if (friends == true) {
+                scope = LeaderboardVariant.COLLECTION_SOCIAL;
+            } else {
+                scope = LeaderboardVariant.COLLECTION_PUBLIC;
+            }
+            Games.Leaderboards.loadTopScores(client, leaderboardID, LeaderboardVariant.TIME_SPAN_ALL_TIME, scope, 25, true).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+                @Override
+                public void onResult(Leaderboards.LoadScoresResult result) {
+                    Status status = result.getStatus();
+                    if (status.isSuccess()) {
+                        LeaderboardScoreBuffer leaderboardScores = result.getScores();
+                        JSONObject data = new JSONObject();
+                        if (leaderboardScores != null) {
+                            try {
+                                Iterator<LeaderboardScore> it = leaderboardScores.iterator();
+
+                                while (it.hasNext()) {
+                                    LeaderboardScore temp = it.next();
+                                    data.put(temp.getScoreHolderDisplayName(), temp.getRawScore());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            callback.onComplete(data, new Error("Leaderboards fetched successfully",  GamesStatusCodes.STATUS_OK));
+                        } else {
+                            callback.onComplete(null, new Error("Error fetching scores",  GamesStatusCodes.STATUS_INTERNAL_ERROR));
+                        }
+                    } else {
+                        callback.onComplete(null, new Error("status.isSuccess did not return 'true'",  GamesStatusCodes.STATUS_NETWORK_ERROR_NO_DATA));
+                    }
+                }
+            });
+        }
+        catch (Exception ex) {
+            callback.onComplete(null, new Error(ex.getLocalizedMessage(), 0));
         }
     }
 

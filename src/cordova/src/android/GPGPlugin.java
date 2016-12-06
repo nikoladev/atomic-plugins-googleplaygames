@@ -219,6 +219,51 @@ public class GPGPlugin extends CordovaPlugin implements GPGService.SessionCallba
     }
 
     @SuppressWarnings("unused")
+    public void loadPlayerCenteredScores(CordovaArgs args, final CallbackContext ctx) throws JSONException {
+
+        String leaderboardId = args.getString(0);
+
+        _service.loadPlayerCenteredScores(leaderboardId, new GPGService.RequestCallback() {
+            @Override
+            public void onComplete(JSONObject responseJSON, GPGService.Error error) {
+                if (responseJSON != null) {
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.OK, responseJSON));
+                } else if (error != null) {
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, new JSONObject(error.toMap())));
+                }
+                // should never happen
+                else {
+                    error = new GPGService.Error("Leaderboards could not be accessed, no specific error code", 1);
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, new JSONObject(error.toMap())));
+                }
+            }
+        });
+    }
+
+    @SuppressWarnings("unused")
+    public void loadTopScores(CordovaArgs args, final CallbackContext ctx) throws JSONException {
+
+        String leaderboardId = args.getString(0);
+        boolean friends = args.optBoolean(1);
+
+        _service.loadTopScores(leaderboardId, friends, new GPGService.RequestCallback() {
+            @Override
+            public void onComplete(JSONObject responseJSON, GPGService.Error error) {
+                if (responseJSON != null) {
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.OK, responseJSON));
+                } else if (error != null) {
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, new JSONObject(error.toMap())));
+                }
+                // should never happen
+                else {
+                    error = new GPGService.Error("Leaderboards could not be accessed, no specific error code", 1);
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.ERROR, new JSONObject(error.toMap())));
+                }
+            }
+        });
+    }
+
+    @SuppressWarnings("unused")
     public void submitScore(CordovaArgs args, final CallbackContext ctx) throws JSONException {
 
         long score = args.getLong(0);

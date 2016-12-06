@@ -265,6 +265,41 @@
             },
 
             /**
+             * Loads the scores around a player for the specified leaderboard id.
+             * @function loadPlayerCenteredScores
+             * @memberOf Cocoon.Social.GooglePlayGames
+             * @param {string} leaderboardID The leaderboard identifier to get score from.
+             * @param {function} callback The callback function. It receives the following parameters:
+             * - Scores: JSON object containing names and scores
+             * - Error.
+             */
+            loadPlayerCenteredScores: function(leaderboardID, callback) {
+                Cocoon.exec(this.serviceName, "loadPlayerCenteredScores", [leaderboardID], function(scores) {
+                    callback(scores, null);
+                }, function(error) {
+                    callback(0, error);
+                });
+            },
+
+            /**
+             * Loads the top scores for the specified leaderboard id.
+             * @function loadTopScores
+             * @memberOf Cocoon.Social.GooglePlayGames
+             * @param {string} leaderboardID The leaderboard identifier to get score from.
+             * @param {boolean} friends If true, will load top scores from user's social circles. If false, will load general top scores.
+             * @param {function} callback The callback function. It receives the following parameters:
+             * - Scores: JSON object containing names and scores
+             * - Error.
+             */
+            loadTopScores: function(leaderboardID, friends, callback) {
+                Cocoon.exec(this.serviceName, "loadTopScores", [leaderboardID], function(scores) {
+                    callback(scores, null);
+                }, function(error) {
+                    callback(0, error);
+                });
+            },
+
+            /**
              * Report user score to the server.
              * @function submitScore
              * @memberOf Cocoon.Social.GooglePlayGames
