@@ -225,11 +225,11 @@ public class GPGPlugin extends CordovaPlugin implements GPGService.SessionCallba
         int timeSpan = args.getInt(1);
         boolean friends = args.getBoolean(2);
 
-        _service.loadPlayerCenteredScores(leaderboardId, timeSpan, friends, new GPGService.RequestCallback() {
+        _service.loadPlayerCenteredScores(leaderboardId, timeSpan, friends, new GPGService.LoadScoresCallback() {
             @Override
-            public void onComplete(JSONObject responseJSON, GPGService.Error error) {
-                if (responseJSON != null) {
-                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.OK, responseJSON));
+            public void onComplete(JSONArray responseJSONArray, GPGService.Error error) {
+                if (responseJSONArray != null) {
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.OK, responseJSONArray));
                 } else if (error != null) {
                     ctx.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, new JSONObject(error.toMap())));
                 }
@@ -249,11 +249,11 @@ public class GPGPlugin extends CordovaPlugin implements GPGService.SessionCallba
         int timeSpan = args.getInt(1);
         boolean friends = args.getBoolean(2);
 
-        _service.loadTopScores(leaderboardId, timeSpan, friends, new GPGService.RequestCallback() {
+        _service.loadTopScores(leaderboardId, timeSpan, friends, new GPGService.LoadScoresCallback() {
             @Override
-            public void onComplete(JSONObject responseJSON, GPGService.Error error) {
-                if (responseJSON != null) {
-                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.OK, responseJSON));
+            public void onComplete(JSONArray responseJSONArray, GPGService.Error error) {
+                if (responseJSONArray != null) {
+                    ctx.sendPluginResult(new PluginResult(PluginResult.Status.OK, responseJSONArray));
                 } else if (error != null) {
                     ctx.sendPluginResult(new PluginResult(PluginResult.Status.JSON_EXCEPTION, new JSONObject(error.toMap())));
                 }

@@ -272,7 +272,7 @@
              * @param {number} timeSpan For which time period to get scores. Use 0 for daily scores, 1 for weekly scores, 2 for scores since the start of the leaderboard. Defaults to 2.
              * @param {boolean} friends If true, will load scores centered around user from their social circles. If false, will load general centered scores. Defaults to false.
              * @param {function} callback The callback function. It receives the following parameters:
-             * - Scores: JSON object containing names and scores
+             * - Scores: Array with JSON objects containing rank, names, and scores
              * - Error.
              */
             loadPlayerCenteredScores: function(leaderboardID, timeSpan, friends, callback) {
@@ -293,7 +293,7 @@
              * @param {number} timeSpan For which time period to get scores. Use 0 for daily scores, 1 for weekly scores, 2 for scores since the start of the leaderboard. Defaults to 2.
              * @param {boolean} friends If true, will load top scores from user's social circles. If false, will load general top scores. Defaults to false.
              * @param {function} callback The callback function. It receives the following parameters:
-             * - Scores: JSON object containing names and scores
+             * - Scores: Array with JSON objects containing rank, names, and scores
              * - Error.
              */
             loadTopScores: function(leaderboardID, timeSpan, friends, callback) {

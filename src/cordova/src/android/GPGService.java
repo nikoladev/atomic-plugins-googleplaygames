@@ -43,6 +43,7 @@ import com.google.android.gms.games.snapshot.SnapshotMetadataChange;
 import com.google.android.gms.games.snapshot.Snapshots;
 import com.google.android.gms.games.stats.PlayerStats;
 import com.google.android.gms.games.stats.Stats;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedOutputStream;
@@ -233,6 +234,9 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         void onComplete(ArrayList<GPGAchievement> achievements, Error error);
     }
 
+    public interface LoadScoresCallback {
+        void onComplete(JSONArray scores, Error error);
+    }
 
     public interface RequestCallback {
         void onComplete(JSONObject responseJSON, Error error);
@@ -1204,7 +1208,7 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }
     }
 
-    public void loadPlayerCenteredScores(final String leaderboardID, final int timeSpan, final boolean friends, final RequestCallback callback) {
+    public void loadPlayerCenteredScores(final String leaderboardID, final int timeSpan, final boolean friends, final LoadScoresCallback callback) {
         try {
             if (!isLoggedIn()) {
                 callback.onComplete(null, new Error("User is not logged into Google Play Game Services", 0));
@@ -1222,20 +1226,27 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     Status status = result.getStatus();
                     if (status.isSuccess()) {
                         LeaderboardScoreBuffer leaderboardScores = result.getScores();
-                        JSONObject data = new JSONObject();
+                        JSONArray arr = new JSONArray();
+                        JSONObject data;
                         if (leaderboardScores != null) {
                             try {
                                 Iterator<LeaderboardScore> it = leaderboardScores.iterator();
 
                                 while (it.hasNext()) {
+                                    data = new JSONObject();
                                     LeaderboardScore temp = it.next();
-                                    data.put(temp.getScoreHolderDisplayName(), temp.getRawScore());
+
+                                    data.put("name", temp.getScoreHolderDisplayName());
+                                    data.put("score", temp.getRawScore());
+                                    data.put("rank", temp.getRank());
+
+                                    arr.put(data);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
-                            callback.onComplete(data, new Error("Leaderboards fetched successfully",  GamesStatusCodes.STATUS_OK));
+                            callback.onComplete(arr, new Error("Leaderboards fetched successfully",  GamesStatusCodes.STATUS_OK));
                         } else {
                             callback.onComplete(null, new Error("Error fetching scores",  GamesStatusCodes.STATUS_INTERNAL_ERROR));
                         }
@@ -1250,7 +1261,7 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }
     }
 
-    public void loadTopScores(final String leaderboardID, final int timeSpan, final boolean friends, final RequestCallback callback) {
+    public void loadTopScores(final String leaderboardID, final int timeSpan, final boolean friends, final LoadScoresCallback callback) {
         try {
             if (!isLoggedIn()) {
                 callback.onComplete(null, new Error("User is not logged into Google Play Game Services", 0));
@@ -1268,22 +1279,27 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     Status status = result.getStatus();
                     if (status.isSuccess()) {
                         LeaderboardScoreBuffer leaderboardScores = result.getScores();
-                        JSONObject data = new JSONObject();
+                        JSONArray arr = new JSONArray();
+                        JSONObject data;
                         if (leaderboardScores != null) {
                             try {
                                 Iterator<LeaderboardScore> it = leaderboardScores.iterator();
 
                                 while (it.hasNext()) {
+                                    data = new JSONObject();
                                     LeaderboardScore temp = it.next();
-                                    // temp.getRank()
-                                    // put in array
-                                    data.put(temp.getScoreHolderDisplayName(), temp.getRawScore());
+
+                                    data.put("name", temp.getScoreHolderDisplayName());
+                                    data.put("score", temp.getRawScore());
+                                    data.put("rank", temp.getRank());
+
+                                    arr.put(data);
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
-                            callback.onComplete(data, new Error("Leaderboards fetched successfully",  GamesStatusCodes.STATUS_OK));
+                            callback.onComplete(arr, new Error("Leaderboards fetched successfully",  GamesStatusCodes.STATUS_OK));
                         } else {
                             callback.onComplete(null, new Error("Error fetching scores",  GamesStatusCodes.STATUS_INTERNAL_ERROR));
                         }
