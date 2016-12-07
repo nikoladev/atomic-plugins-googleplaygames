@@ -1239,6 +1239,7 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                                     data.put("name", temp.getScoreHolderDisplayName());
                                     data.put("score", temp.getRawScore());
                                     data.put("rank", temp.getRank());
+                                    data.put("id", temp.getScoreHolder().getPlayerId());
 
                                     arr.put(data);
                                 }
@@ -1292,6 +1293,7 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                                     data.put("name", temp.getScoreHolderDisplayName());
                                     data.put("score", temp.getRawScore());
                                     data.put("rank", temp.getRank());
+                                    data.put("id", temp.getScoreHolder().getPlayerId());
 
                                     arr.put(data);
                                 }
