@@ -269,15 +269,19 @@
              * @function loadPlayerCenteredScores
              * @memberOf Cocoon.Social.GooglePlayGames
              * @param {string} leaderboardID The leaderboard identifier to get score from.
+             * @param {number} timeSpan For which time period to get scores. Use 0 for daily scores, 1 for weekly scores, 2 for scores since the start of the leaderboard. Defaults to 2.
+             * @param {boolean} friends If true, will load scores centered around user from their social circles. If false, will load general centered scores. Defaults to false.
              * @param {function} callback The callback function. It receives the following parameters:
              * - Scores: JSON object containing names and scores
              * - Error.
              */
-            loadPlayerCenteredScores: function(leaderboardID, callback) {
-                Cocoon.exec(this.serviceName, "loadPlayerCenteredScores", [leaderboardID], function(scores) {
+            loadPlayerCenteredScores: function(leaderboardID, timeSpan, friends, callback) {
+                timeSpan = timeSpan === 0 ? 0 : (timeSpan || 2);
+                friends = friends ? true : false;
+                Cocoon.exec(this.serviceName, "loadPlayerCenteredScores", [leaderboardID, timeSpan, friends], function(scores) {
                     callback(scores, null);
                 }, function(error) {
-                    callback(0, error);
+                    callback(null, error);
                 });
             },
 
@@ -286,16 +290,19 @@
              * @function loadTopScores
              * @memberOf Cocoon.Social.GooglePlayGames
              * @param {string} leaderboardID The leaderboard identifier to get score from.
-             * @param {boolean} friends If true, will load top scores from user's social circles. If false, will load general top scores.
+             * @param {number} timeSpan For which time period to get scores. Use 0 for daily scores, 1 for weekly scores, 2 for scores since the start of the leaderboard. Defaults to 2.
+             * @param {boolean} friends If true, will load top scores from user's social circles. If false, will load general top scores. Defaults to false.
              * @param {function} callback The callback function. It receives the following parameters:
              * - Scores: JSON object containing names and scores
              * - Error.
              */
-            loadTopScores: function(leaderboardID, friends, callback) {
-                Cocoon.exec(this.serviceName, "loadTopScores", [leaderboardID], function(scores) {
+            loadTopScores: function(leaderboardID, timeSpan, friends, callback) {
+                timeSpan = timeSpan === 0 ? 0 : (timeSpan || 2);
+                friends = friends ? true : false;
+                Cocoon.exec(this.serviceName, "loadTopScores", [leaderboardID, timeSpan, friends], function(scores) {
                     callback(scores, null);
                 }, function(error) {
-                    callback(0, error);
+                    callback(null, error);
                 });
             },
 

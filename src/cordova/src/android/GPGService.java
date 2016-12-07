@@ -1204,13 +1204,19 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }
     }
 
-    public void loadPlayerCenteredScores(final String leaderboardID, final RequestCallback callback) {
+    public void loadPlayerCenteredScores(final String leaderboardID, final int timeSpan, final boolean friends, final RequestCallback callback) {
         try {
             if (!isLoggedIn()) {
                 callback.onComplete(null, new Error("User is not logged into Google Play Game Services", 0));
                 return;
             }
-            Games.Leaderboards.loadPlayerCenteredScores(client, leaderboardID, LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC, 25, true).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+            int scope = -1;
+            if (friends == true) {
+                scope = LeaderboardVariant.COLLECTION_SOCIAL;
+            } else {
+                scope = LeaderboardVariant.COLLECTION_PUBLIC;
+            }
+            Games.Leaderboards.loadPlayerCenteredScores(client, leaderboardID, timeSpan, scope, 25).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
                 @Override
                 public void onResult(Leaderboards.LoadScoresResult result) {
                     Status status = result.getStatus();
@@ -1244,7 +1250,7 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }
     }
 
-    public void loadTopScores(final String leaderboardID, final boolean friends, final RequestCallback callback) {
+    public void loadTopScores(final String leaderboardID, final int timeSpan, final boolean friends, final RequestCallback callback) {
         try {
             if (!isLoggedIn()) {
                 callback.onComplete(null, new Error("User is not logged into Google Play Game Services", 0));
@@ -1256,7 +1262,7 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             } else {
                 scope = LeaderboardVariant.COLLECTION_PUBLIC;
             }
-            Games.Leaderboards.loadTopScores(client, leaderboardID, LeaderboardVariant.TIME_SPAN_ALL_TIME, scope, 25, true).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
+            Games.Leaderboards.loadTopScores(client, leaderboardID, timeSpan, scope, 25).setResultCallback(new ResultCallback<Leaderboards.LoadScoresResult>() {
                 @Override
                 public void onResult(Leaderboards.LoadScoresResult result) {
                     Status status = result.getStatus();
@@ -1269,6 +1275,8 @@ public class GPGService implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
                                 while (it.hasNext()) {
                                     LeaderboardScore temp = it.next();
+                                    // temp.getRank()
+                                    // put in array
                                     data.put(temp.getScoreHolderDisplayName(), temp.getRawScore());
                                 }
                             } catch (Exception e) {

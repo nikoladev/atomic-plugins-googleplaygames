@@ -222,8 +222,10 @@ public class GPGPlugin extends CordovaPlugin implements GPGService.SessionCallba
     public void loadPlayerCenteredScores(CordovaArgs args, final CallbackContext ctx) throws JSONException {
 
         String leaderboardId = args.getString(0);
+        int timeSpan = args.getInt(1);
+        boolean friends = args.getBoolean(2);
 
-        _service.loadPlayerCenteredScores(leaderboardId, new GPGService.RequestCallback() {
+        _service.loadPlayerCenteredScores(leaderboardId, timeSpan, friends, new GPGService.RequestCallback() {
             @Override
             public void onComplete(JSONObject responseJSON, GPGService.Error error) {
                 if (responseJSON != null) {
@@ -244,9 +246,10 @@ public class GPGPlugin extends CordovaPlugin implements GPGService.SessionCallba
     public void loadTopScores(CordovaArgs args, final CallbackContext ctx) throws JSONException {
 
         String leaderboardId = args.getString(0);
-        boolean friends = args.optBoolean(1);
+        int timeSpan = args.getInt(1);
+        boolean friends = args.getBoolean(2);
 
-        _service.loadTopScores(leaderboardId, friends, new GPGService.RequestCallback() {
+        _service.loadTopScores(leaderboardId, timeSpan, friends, new GPGService.RequestCallback() {
             @Override
             public void onComplete(JSONObject responseJSON, GPGService.Error error) {
                 if (responseJSON != null) {
